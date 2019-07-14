@@ -1,57 +1,68 @@
 import "../styles/index.css";
-import fetch from 'isomorphic-unfetch';
+import { withRouter } from "next/router";
+import fetch from "isomorphic-unfetch";
 
-const Index = (props) => (
-  <div className="container">
-    <header>
-      <nav className="flex items-center justify-between flex-wrap p-6">
-        <div className="flex items-center flex-shrink-0 mr-6">
-          <img className="h-8 w-8 mr-3" src="/static/icon/charmander.png" />
-          <span className="font-semibold text-xl tracking-tight">
-            CVL GodJira
-          </span>
-        </div>
-      </nav>
-    </header>
-    <main>
-      <div className="flex mb-4">
-        <div className="w-1/3">
-          <div className="max-w-sm rounded overflow-hidden shadow-lg">
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
-                
-              </p>
-            </div>
-            <div className="px-6 py-4">
-              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-                #photography
-              </span>
-              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-                #travel
-              </span>
-              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
-                #winter
+class Index extends React.Component {
+  static async getInitialProps() {
+    const url = "https://convolabai.atlassian.net/rest/api/3/users/search";
+    let allUsers = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic cGFra2F3YXRAY29udm9sYWIuYWk6bVRQeXY2UnIyWHhiaWJUdUF4cGQ4MThE"
+      }
+    }).then(result => {
+      return result.json();
+    });
+    return {
+      allUsers
+    };
+  }
+
+  render() {
+    const { allUsers } = this.props;
+    return (
+      <div className="container">
+        <header>
+          <nav className="flex items-center justify-between flex-wrap p-6">
+            <div className="flex items-center flex-shrink-0 mr-6">
+              <img className="h-8 w-8 mr-3" src="/static/icon/charmander.png" />
+              <span className="font-semibold text-xl tracking-tight">
+                CVL GodJira
               </span>
             </div>
+          </nav>
+        </header>
+        <main>
+          <div className="flex mb-4 flex-wrap">
+            {allUsers.map(user => {
+              return (
+                <div className="w-1/3 mb-10">
+                  <div className="max-w-sm rounded overflow-hidden shadow-lg p-5">
+                    <div class="flex items-center border-b-2 pb-3">
+                      <img
+                        class="w-10 h-10 rounded-full mr-4"
+                        src={user.avatarUrls["48x48"]}
+                      />
+                      <div class="text-sm font-semibold">
+                        <p class="text-gray-900 leading-none">
+                          {user.displayName}
+                        </p>
+                        <p class="text-gray-600 break-all">
+                          {user.emailAddress}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </main>
       </div>
-    </main>
-  </div>
-);
-
-
-Index.getInitialProps  = async function() {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
-  const data = await res.json();
-
-  console.log(`Show data fetched. Count: ${data}`);
-
-  return {
-    shows: data.map(entry => entry.show)
-  };
+    );
+  }
 }
-
 
 export default Index;
