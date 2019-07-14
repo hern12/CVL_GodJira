@@ -3,23 +3,6 @@ import { withRouter } from "next/router";
 import fetch from "isomorphic-unfetch";
 
 class Index extends React.Component {
-  static async getInitialProps() {
-    const url = "https://convolabai.atlassian.net/rest/api/3/users/search";
-    let allUsers = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          "Basic cGFra2F3YXRAY29udm9sYWIuYWk6bVRQeXY2UnIyWHhiaWJUdUF4cGQ4MThE"
-      }
-    }).then(result => {
-      return result.json();
-    });
-    return {
-      allUsers
-    };
-  }
-
   render() {
     const { allUsers } = this.props;
     return (
